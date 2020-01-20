@@ -23,8 +23,8 @@ class MyHomePage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Flutter App'),
       ),
-      body: SingleChildScrollView(
-        child: Column(
+      body: SingleChildScrollView (
+              child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Container(
