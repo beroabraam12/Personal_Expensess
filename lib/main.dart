@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:personal_express/widgets/chart.dart';
 import 'package:personal_express/widgets/new_transaction.dart';
 import 'package:personal_express/widgets/transaction_list.dart';
 import 'models/transaction.dart';
@@ -19,6 +20,9 @@ class MyApp extends StatelessWidget {
                   fontFamily: 'OpenSans',
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
+                ),
+                button: TextStyle(
+                  color: Color(0xFFFFFFFF),
                 ),
               ),
           appBarTheme: AppBarTheme(
@@ -56,15 +60,33 @@ class _MyHomePageState extends State<MyHomePage> {
     // ),
   ];
 
-  void _addNewTransaction(String txTitle, double txAmount) {
+  List<Transaction> get _recentTransactions {
+    return _userTransactions.where((tx) {
+      return tx.date.isAfter(
+        DateTime.now().subtract(
+          Duration(days: 7),
+        ),
+      );
+    }).toList();
+  }
+
+  void _addNewTransaction(String txTitle, double txAmount, DateTime txDate) {
     final newTx = Transaction(
       title: txTitle,
       amount: txAmount,
-      date: DateTime.now(),
+      date: txDate,
       id: DateTime.now().toString(),
     );
     setState(() {
       _userTransactions.add(newTx);
+    });
+  }
+
+  void _removeTransaction(String id) {
+    setState(() {
+      _userTransactions.removeWhere((tx) {
+        return tx.id == id;
+      });
     });
   }
 
@@ -98,15 +120,8 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Container(
-              width: double.infinity,
-              child: Card(
-                color: Colors.blue,
-                child: Text('CHART!'),
-                elevation: 5,
-              ),
-            ),
-            TransactionList(_userTransactions),
+            Chart(_recentTransactions),
+            TransactionList(_userTransactions, _removeTransaction),
           ],
         ),
       ),
